@@ -1,2 +1,3 @@
 step,images,minutes,note
 gold_manual,4,10,gan tay hoan toan bang CVAT khong dung AI
+batch_review,24,20,duyet pre-label YOLO26+YOLOE (co 12 bay) tren CVAT
