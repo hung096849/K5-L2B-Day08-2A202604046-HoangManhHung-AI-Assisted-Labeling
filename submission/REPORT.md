@@ -1,4 +1,4 @@
-# Báo cáo Day 08 — <<MSHV - Họ và tên>>
+# Báo cáo Day 08 — <<2A202604046 - Hoàng Mạnh Hùng>>
 
 > Một file duy nhất cho cả bài (đã gộp recipe, QC và ghi chú cá nhân). Mọi con số kèm **mẫu số** và nguồn (file nào). Viết bằng lời của bạn.
 
@@ -6,14 +6,14 @@
 
 | Lớp | Model + cỡ | Ngưỡng | Vì sao (dẫn `run_id` trong `model_log.csv`) |
 |---|---|---|---|
-| person / bicycle / motorbike / car / bus / truck | <<YOLO26m>> | <<theo lớp, từ threshold_sweep>> | <<>> |
-| three_wheeler | <<YOLOE-26s, prompt: ...>> | <<>> | <<>> |
+| person / bicycle / motorbike / car / bus / truck | YOLO26m | Mặc định 0.3 cho cả 6 lớp (không lớp nào có ngưỡng riêng) | Nhanh (0.6 s/ảnh ở conf 0.25, r01) và bắt tốt lớp COCO phổ biến. Quét ngưỡng trên 4 ảnh gold: `person` tối đa 71% recall (28 vật), `bicycle` 80% (5 vật), `motorbike` 62% (21 vật), `car` 75% (8 vật), không ngưỡng nào ≤ 0.5 đạt 90% nên giữ mặc định; `bus`, `truck` có 0 vật trong gold nên cũng giữ mặc định. Ở r02 (conf 0.5) số box giảm 215 → 139 nhưng dễ rơi vật nhỏ, nên không dùng một ngưỡng chung 0.5. |
+| three_wheeler | YOLOE-26s, prompt: `three_wheeler` | 0.15 | YOLO26 không có lớp này; YOLOE bắt được theo prompt chữ (r03, 8 box / 8 ảnh pilot, 0.34 s/ảnh). Quét ngưỡng: recall 100%, precision 78% trên 7 vật gold. |
 
-- Lệnh `merge_prelabels.py` đã dùng (dán nguyên): <<>>
-- **Phiên bản SAM bạn chọn** (SAM 1 / 2.1 / 3) và lý do: <<chất lượng mask, tốc độ, RAM, quyền truy cập>>
-- Lỗi nào **không sửa được bằng đổi ngưỡng** (ví dụ tuk-tuk bị gọi `car`)? Sửa thế nào? <<>>
-- Box **điểm cao mà sai** hoặc **điểm thấp mà đúng** (ảnh nào): <<>>
-- Giới hạn: chọn ngưỡng trên chính gold (4 ảnh) nên số đo máy trên gold là lạc quan: <<>>
+- Lệnh `merge_prelabels.py` đã dùng (dán nguyên): <<điền sau khi chạy ở Pha 4>>
+- **Phiên bản SAM bạn chọn** (SAM 1 / 2.1 / 3) và lý do: SAM 2.1 (`sam2.1_b.pt`, r04). Mask bám viền người và xe tốt hơn box chữ nhật, chạy được trên máy 16 GB RAM (MPS). Đánh đổi: 3.84 s/ảnh, chậm hơn detector khoảng 6–11 lần (0.32–0.6 s/ảnh), nên chỉ dùng cho vài ảnh cần mask. Tôi chỉ thử bản này, chưa so sánh với SAM 1 hay SAM 3.
+- Lỗi nào **không sửa được bằng đổi ngưỡng** (ví dụ tuk-tuk bị gọi `car`)? Sửa thế nào? Tuk-tuk bị YOLO26 gán nhầm `car`/`truck` hoặc bỏ sót (ví dụ `img_013.jpg`, <<xác nhận lại ảnh bạn thực sự thấy>>), vì mô hình chỉ có 80 lớp COCO. SAM cũng không sửa được vì chỉ vẽ lại viền theo box đầu vào. Cách sửa: khi gộp, đặt `yoloe_all` đứng trước `y26_all` để box `three_wheeler` thắng box `car`/`truck` chồng lên (IoU ≥ 0.6), phần còn lại do người duyệt sửa.
+- Box **điểm cao mà sai** hoặc **điểm thấp mà đúng** (ảnh nào): <<điền sau khi duyệt batch ở Pha 4>>
+- Giới hạn: chọn ngưỡng trên chính gold (4 ảnh) nên số đo máy trên gold là lạc quan; chỉ `three_wheeler` (7 vật) và `person` (28 vật) có cỡ mẫu tạm đủ, các lớp `bicycle` (5 vật), `car` (8 vật) là mẫu rất nhỏ. Gold đầu tiên của tôi vẽ box `motorbike`/`bicycle` bao cả người ngồi, trái guideline mục 4.1.4, khiến recall `bicycle` chỉ 0% (5 vật) và `motorbike` 67% (9 vật). Sau khi tách thành hai box riêng (`person` + xe), `bicycle` lên 80%; số vật `motorbike` tăng từ 9 lên 21 nhưng recall còn 62%. Gold còn 6 box `motorbike` cao 11–17 px (< 20 px) ở `img_036.jpg` do tôi chủ động không gom vào `ignore_region` để giữ tiến độ (cảnh báo của `validate_labels.py`), nhiều khả năng chúng kéo recall `motorbike` xuống; đây là hạn chế đã biết của số đo.
 
 ## 2. AI error profile (từ `qc/review_stats.md`)
 
