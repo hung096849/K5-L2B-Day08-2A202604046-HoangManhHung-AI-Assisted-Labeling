@@ -1,0 +1,12 @@
+image,object_id,error_type,reviewer,note
+img_003.jpg,7,thua,Hoang Manh Hung,"Ba box cùng lớp (id 6, 7, 8) trên cùng một vật; id 6 ôm khớp nhất nên giữ, id 7 là box trùng thừa"
+img_003.jpg,8,thua,Hoang Manh Hung,Box trùng thừa với id 6 (cùng một vật)
+img_006.jpg,,khong,Hoang Manh Hung,
+img_013.jpg,138,sai_lop,Hoang Manh Hung,"Box gắn ở xa, không xác định được vật thể, lớp không khớp vật nào"
+img_013.jpg,139,sai_lop,Hoang Manh Hung,"Box gắn ở xa, không xác định được vật thể, lớp không khớp vật nào"
+img_013.jpg,140,thua,Hoang Manh Hung,Hai box 140 và 141 cùng gán vào một vật nhưng không box nào ôm khớp vật
+img_013.jpg,141,thua,Hoang Manh Hung,Hai box 140 và 141 cùng gán vào một vật nhưng không box nào ôm khớp vật
+img_014.jpg,,khong,Hoang Manh Hung,
+img_024.jpg,324,sai_lop,Hoang Manh Hung,Box gán lớp car nhưng vật là xe máy (motorbike)
+img_033.jpg,,khong,Hoang Manh Hung,
+img_035.jpg,,khong,Hoang Manh Hung,

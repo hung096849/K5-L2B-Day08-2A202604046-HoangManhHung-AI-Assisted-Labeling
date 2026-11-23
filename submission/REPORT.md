@@ -58,20 +58,20 @@
 
 ## 6. Calibration (Part 6)
 
-- Số quyết định: <<>> (`calibration_decisions.csv`); quan trọng nhất (dẫn `CAL-xx`): <<>>
-- Quy tắc mới đã vào `guideline_v1.1_calibrated.md`: <<>>
-- Nguyên nhân gốc: <<guideline mơ hồ / chưa nắm quy tắc / máy>>
+- Số quyết định: 4 (`calibration_decisions.csv`); quan trọng nhất (dẫn `CAL-xx`): **CAL-02** (một vật một box, vì `thua` là loại lỗi nhiều nhất trong mẫu QC: 4/7 lỗi, ở `img_003` và `img_013`) và **CAL-03** (kính chắn gió thuộc mask xe, chốt câu hỏi mở số 5 ở mục 6 của guideline, ví dụ `img_013`). CAL-01 (máy gán `car` cho xe máy ở `img_024`, box sai lớp ở xa ở `img_013`) và CAL-04 (lọt 6/12 bẫy) là lỗi của máy và của cách duyệt nên không đổi guideline.
+- Quy tắc mới đã vào `guideline_v1.1_calibrated.md`: 4.1.8 "Một vật một box: giữ box ôm khớp nhất, xóa box trùng" và 4.2.3 "Kính chắn gió, cửa sổ xe thuộc mask xe; người nhìn thấy qua kính không thuộc mask xe". Các câu hỏi mở 1–4 và 6–7 của mục 6 chưa chốt vì chưa gặp trong lô, tôi ghi nhận đây là hạn chế.
+- Nguyên nhân gốc: chủ yếu **máy và cách duyệt của tôi** (CAL-01, CAL-02, CAL-04: duyệt ~50 giây/ảnh, bắt bẫy 6/12); chỉ 2/4 ca (CAL-02, CAL-03) cần sửa chữ trong guideline. Trước đó gold bị lệch quy ước vì tôi gán khi chưa đọc guideline (xem mục 1).
 
 ## 7. QC và quyết định (Part 6)
 
-- Mẫu: <<n>> ảnh (<<m>> ảnh `can_review` + <<k>> ngẫu nhiên, seed 42); người kiểm: bạn (**hạn chế**: bạn vừa là người duyệt).
-- Lỗi theo **đối tượng**: <<.../... = ...%>> · theo **ảnh**: <<.../... = ...%>> (ngưỡng Release ≤ 2%)
-- Top lỗi (trong: bỏ sót, thừa, sai lớp, sai vị trí/kích thước, sai thuộc tính, sai mask) + một ảnh ví dụ mỗi loại: <<>>
-- **Giới hạn mẫu nhỏ** (cận trên 95% trong `qc_report_auto.md`): <<>>
-- Script kiểm được / không kiểm được (ví dụ ôm sát, cùng bỏ sót với máy, theo checklist thật): <<>>
+- Mẫu: 7 ảnh (2 ảnh `can_review` + 5 ngẫu nhiên, seed 42), 172 đối tượng (`qc_sample.csv`); người kiểm: bạn (**hạn chế**: bạn vừa là người duyệt).
+- Lỗi theo **đối tượng**: 7/172 = 4,1% · theo **ảnh**: 3/7 = 42,9% (ngưỡng Release ≤ 2%) (`qc_report_auto.md`).
+- Top lỗi (trong: bỏ sót, thừa, sai lớp, sai vị trí/kích thước, sai thuộc tính, sai mask) + một ảnh ví dụ mỗi loại: **thừa** 4 lỗi (`img_003`: box #7, #8 trùng với #6; `img_013`: #140, #141 cùng một vật, không box nào khớp); **sai lớp** 3 lỗi (`img_024`: #324 gán `car` cho xe máy; `img_013`: #138, #139 box ở xa không gắn với vật nào). Không có lỗi bỏ sót, sai vị trí/kích thước, sai thuộc tính hay sai mask trong mẫu này. Lỗi `thua` lặp lại nên là lỗi hệ thống, không chỉ sửa từng ảnh.
+- **Giới hạn mẫu nhỏ** (cận trên 95% trong `qc_report_auto.md`): 3 ảnh lỗi trong 7 ảnh, cận trên Wilson 95% của tỉ lệ ảnh lỗi thật là **75%**; mẫu 7 ảnh không thể chứng minh ngưỡng 2%. Mẫu cũng chỉ có 2 ca khó và 5 ảnh ngẫu nhiên trên 24 ảnh batch.
+- Script kiểm được / không kiểm được (ví dụ ôm sát, cùng bỏ sót với máy, theo checklist thật): script chỉ đếm theo phiếu `qc_review.csv` do tôi điền bằng mắt, nên không kiểm được box có ôm sát vật thật không, lớp có đúng thực tế không, vật mà cả tôi và máy cùng bỏ sót, và việc tôi có làm đúng checklist hay không. Vì tôi vừa duyệt vừa kiểm nên có thể bỏ lọt cùng loại lỗi đã bỏ lọt khi duyệt.
 
-**Quyết định: <<Release / Hold / Rework>>**, ngày <<YYYY-MM-DD>>. Lý do (đi theo Hold → Rework → Release): <<>>
-Nếu Rework / Hold, việc cần làm tiếp: <<>>
+**Quyết định: Rework**, ngày 2026-11-23. Lý do (đi theo Hold → Rework → Release): không chọn Release vì ảnh lỗi 3/7 = 42,9% > 2%, lỗi `thua` lặp (4/7 lỗi) và bắt bẫy 6/12 = 50% < 80% nên lô duyệt chưa đáng tin. Không chọn Hold vì dữ liệu không hỏng và hai ca guideline mơ hồ gặp trong lô đã được chốt ở v1.1 (CAL-02, CAL-03); các câu hỏi mở còn lại chưa gặp trong lô.
+Nếu Rework / Hold, việc cần làm tiếp: (1) sửa trong CVAT các box lỗi đã tìm thấy (`img_003` #7, #8; `img_013` #138–#141; `img_024` #324) rồi export `submission/labels/qc_fixed.json`; (2) duyệt lại 6 ảnh bẫy lọt (`img_026`, `img_013`, `img_005`, `img_034`, `img_008`, `img_021`) theo đủ checklist và dành nhiều thời gian hơn; (3) chạy lại `build_release.py` và `qc_sample.py --force`, kiểm lại với mẫu lớn hơn rồi ghi vòng sau vào báo cáo.
 
 ## 8. Ghi chú cá nhân
 
