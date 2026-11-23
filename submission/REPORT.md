@@ -46,10 +46,15 @@
 
 | Ảnh | SAM (phiên bản) | Số click | Mask gồm người lái / hàng hoá? | Lỗi quan sát | File trong `masks/` |
 |---|---|---|---|---|---|
-| <<img_0xx>> | <<>> | <<>> | <<>> | <<>> | <<>> |
+| img_013.jpg | SAM 2.1 (`sam2.1_b.pt`) | 9 (5 dương + 4 âm) | Không gồm người lái và khách (áo xanh, áo sọc đỏ); mask 269.847 px (38,6% ảnh), 1 polygon | Còn đốm lẻ trên tay, quần, dép người lái; kính chắn gió bị phủ | `tuktuk_img013_sam2_pos5neg4.jpg` |
+| img_013.jpg | MobileSAM (SAM 1, `mobile_sam.pt`) | 9 (5 dương + 4 âm, cùng tọa độ) | Không gồm người, sạch hơn SAM 2.1; mask 185.609 px (26,6% ảnh), 2 polygon | Mái bạc chỉ phủ vài mảng, mất khoảng nửa mái; đầu xe đỏ phủ mỏng | `tuktuk_img013_sam1_pos5neg4.jpg` |
+| img_004.jpg | SAM 2.1 (`sam2.1_b.pt`) | 3 (2 dương + 1 âm) | Không dính người đứng gần; không lan sang xe xanh lá bên cạnh | Không có lỗi đáng kể | `tuktuk_img004_sam2.jpg` |
+| img_017.jpg | SAM 2.1 (`sam2.1_b.pt`) | 3 (2 dương + 1 âm) | Xe không có người ngồi; mask không dính bàn ghế ở nền | Biển `TAXI` trên mái hơi tách khỏi mask | `tuktuk_img017_sam2.jpg` |
 
-- Đối chiếu guideline mục 4.2: quy tắc nào giúp, quy tắc nào thiếu? <<>>
-- *(Tuỳ chọn)* Interactor SAM trong CVAT: làm được / không (lỗi gì, đã thử gì); khác gì offline: <<>>
+- Quá trình sửa `img_013.jpg` (SAM 2.1): (1) 2 dương + 1 âm (`tuktuk_img013_sam2`): người lái và khách vẫn bị phủ; (2) 2 dương + 4 âm (`tuktuk_img013_sam2_neg4`): người đã tách nhưng mask vỡ, chỉ 80.208 px (11,5% ảnh) và 2 polygon, thiếu thân xe, bánh trước và đầu xe; (3) thêm 3 điểm dương lên bánh trước, cản sau và đầu xe (`tuktuk_img013_sam2_pos5neg4`): 269.847 px (38,6%), 1 polygon, phủ đủ xe. Kết luận: một điểm âm không đủ để tách người, và nhiều điểm âm mà ít điểm dương làm mask vỡ, nên phải cân bằng cả hai.
+- So sánh SAM 2.1 và MobileSAM trên cùng 9 click: MobileSAM phủ ít hơn khoảng 31% diện tích (185.609 so với 269.847 px) và làm mất nửa mái xe, nhưng tách người sạch hơn. Tôi chọn SAM 2.1 vì mask liền mạch hơn, hợp mục tiêu "mask ôm cả khung xe và mái" của guideline 4.2. Đây là nhận xét định tính trên một ảnh, tôi không đo IoU; script `sam2_points.py` cũng không in thời gian chạy nên tôi không có số giây để so sánh tốc độ giữa hai bản.
+- Đối chiếu guideline mục 4.2: quy tắc giúp: mask chỉ ôm khung xe, mái và bánh còn người tách riêng (điểm `--neg` dùng đúng để thực hiện việc này). Quy tắc thiếu: guideline chưa nói kính chắn gió có thuộc mask xe hay không (mục 6, câu hỏi 5 vẫn mở), nên mask `img_013` phủ kính mà tôi chưa có căn cứ để tính đó là lỗi hay đúng; guideline cũng chưa nói về khách ngồi trong xe ba bánh có mui che ở mức mask.
+- *(Tuỳ chọn)* Interactor SAM trong CVAT: không thử; tôi chỉ chạy SAM offline bằng `sam2_points.py`.
 
 ## 6. Calibration (Part 6)
 
